@@ -4,10 +4,12 @@
 library just_util;
 
 export 'src/just_bool/just_bool.dart';
+export 'src/just_datetime/just_datetime.dart';
 export 'src/just_double/just_double.dart';
 export 'src/just_int/just_int.dart';
 export 'src/just_json/just_json.dart';
 export 'src/just_list/just_list.dart';
+export 'src/just_logger/just_logger.dart';
 export 'src/just_map/just_map.dart';
 export 'src/just_runes/just_runes.dart';
 export 'src/just_set/just_set.dart';
