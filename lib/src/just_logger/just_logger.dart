@@ -1,3 +1,5 @@
+import 'package:just_util/src/just_int/just_int.dart';
+
 enum LogFontColor {
   black,
   red,
@@ -98,11 +100,48 @@ extension LogBackgroundColorExtension on LogBackgroundColor {
   }
 }
 
-void justLog(String msg, {LogFontColor? fontColor, LogBackgroundColor? backgroundColor}) {
-  String finalFontColor = fontColor == null ? '' : fontColor.toColorString();
-  String finalBackground = backgroundColor == null ? '' : backgroundColor.toColorString();
+class JustLog {
+  static void write(
+    String msg, {
+    LogFontColor? fontColor,
+    LogBackgroundColor? backgroundColor,
+  }) {
+    String finalFontColor = fontColor == null ? '' : fontColor.toColorString();
+    String finalBackground = backgroundColor == null ? '' : backgroundColor.toColorString();
 
-  print('$finalFontColor$finalBackground$msg\x1B[0m');
+    print('$finalFontColor$finalBackground$msg\x1B[0m');
+  }
+
+  static void writeCallStack(
+    String msg, {
+    LogFontColor? fontColor,
+    LogBackgroundColor? backgroundColor,
+    String contains = '',
+    String filterName = '',
+  }) {
+    final currentStackStrList = StackTrace.current.toString().split('\n').sublist(1);
+
+    String finalFilterName = filterName == '' ? '[JustLog]' : '[$filterName]';
+
+    String resultMsg = '$finalFilterName Call Stack ${"-" * 60}\n';
+    resultMsg += '$finalFilterName message: $msg';
+
+    List<String> filteredList = [];
+
+    for (String currentStackString in currentStackStrList) {
+      if (currentStackString != '' && currentStackString.contains(contains)) {
+        String removeNum = currentStackString.split('#')[1].substring(1);
+        filteredList.add(removeNum);
+      }
+    }
+
+    for (int i = filteredList.length - 1; i >= 0; i--) {
+      String currentString = filteredList[i];
+      if (currentString != '' && currentString.contains(contains)) {
+        resultMsg += '\n$finalFilterName #${i.toStringAtLeat2Digits()} $currentString';
+      }
+    }
+
+    Future.microtask(() => write(resultMsg, fontColor: fontColor, backgroundColor: backgroundColor));
+  }
 }
-
-class Logger {}
