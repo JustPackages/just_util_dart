@@ -1,3 +1,5 @@
+import 'package:just_util/src/just_int/just_int.dart';
+
 enum LogFontColor {
   black,
   red,
@@ -98,11 +100,63 @@ extension LogBackgroundColorExtension on LogBackgroundColor {
   }
 }
 
-void justLog(String msg, {LogFontColor? fontColor, LogBackgroundColor? backgroundColor}) {
-  String finalFontColor = fontColor == null ? '' : fontColor.toColorString();
-  String finalBackground = backgroundColor == null ? '' : backgroundColor.toColorString();
+class JustLog {
+  static void write(
+    String msg, {
+    LogFontColor? fontColor,
+    LogBackgroundColor? backgroundColor,
+  }) {
+    String finalFontColor = fontColor == null ? '' : fontColor.toColorString();
+    String finalBackground = backgroundColor == null ? '' : backgroundColor.toColorString();
 
-  print('$finalFontColor$finalBackground$msg\x1B[0m');
+    print('$finalFontColor$finalBackground$msg\x1B[0m');
+  }
+
+  /// Write Message with CallStack([StackTrace])
+  ///
+  /// - @param [String] msg: Call Stack 출력 전, 출력하고 싶은 메세지
+  /// - @param [LogFontColor?] fontColor: 출력 글씨 색상
+  /// - @param [LogBackgroundColor?] backgroundColor: 출력 글씨 배경 색상
+  /// - @param [String] filterKeywords: 전체 호출 스택 중, filterKeywords가 포함된 호출 스택만 출력
+  /// - @param [logBlock] logBlock: 해당 함수를 통해 출력되는 모든 문장 앞에 쓰일 문자열
+  static void writeCallStack(
+    String msg, {
+    LogFontColor? fontColor,
+    LogBackgroundColor? backgroundColor,
+    String filterKeywords = '',
+    String logBlock = 'JustLog',
+  }) {
+    String finalLogBlock = '[$logBlock]';
+
+    String resultMsg = '$finalLogBlock Call Stack ${"-" * 60}\n';
+    resultMsg += '$finalLogBlock message: $msg';
+
+    // 0번째는 JustLog.writeCallStack()이므로 제거
+    final currentStackStrList = StackTrace.current.toString().split('\n').sublist(1);
+
+    List<String> filteredList = [];
+
+    // filterKeywords를 포함하고 있는 CallStack을 걸러내고, 호출 번호 제거
+    for (String currentStackString in currentStackStrList) {
+      if (currentStackString != '' && currentStackString.contains(filterKeywords)) {
+        String removeSharp = currentStackString.split('#')[1];
+        int firstSpaceIdx = removeSharp.indexOf(' ');
+        String removeNum = removeSharp.substring(firstSpaceIdx);
+
+        filteredList.add(removeNum);
+      }
+    }
+
+    // 걸러낸 호출문들 새로 번호 부여
+    for (int i = filteredList.length - 1; i >= 0; i--) {
+      String currentString = filteredList[i];
+      if (currentString != '' && currentString.contains(filterKeywords)) {
+        resultMsg += '\n$finalLogBlock #${(i + 1).toStringAtLeat2Digits()} $currentString';
+      }
+    }
+
+    resultMsg += '\n$finalLogBlock ${"-" * 71}\n';
+
+    write(resultMsg, fontColor: fontColor, backgroundColor: backgroundColor);
+  }
 }
-
-class Logger {}
