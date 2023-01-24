@@ -35,10 +35,43 @@ void testJustLogWrite() {
 }
 
 void testJustLogWriteCallStack() {
-  JustLog.write('\n<TEST JUST LOG Write CallStack>');
+  JustLog.write('\n<TEST JUST LOG Write CallStack>\n');
+
+  void innerCallStack10() {
+    JustLog.writeCallStack(
+      'Check Call Stack Message~!',
+      fontColor: LogFontColor.green,
+      filterKeywords: '',
+      logBlock: 'TestLog',
+    );
+  }
+
+  void innerCallStack9() {
+    innerCallStack10();
+  }
+
+  void innerCallStack8() {
+    innerCallStack9();
+  }
+
+  void innerCallStack7() {
+    innerCallStack8();
+  }
+
+  void innerCallStack6() {
+    innerCallStack7();
+  }
+
+  void innerCallStack5() {
+    innerCallStack6();
+  }
+
+  void innerCallStack4() {
+    innerCallStack5();
+  }
 
   void innerCallStack3() {
-    JustLog.writeCallStack('HI', contains: '', filterName: '');
+    innerCallStack4();
   }
 
   void innerCallStack2() {
