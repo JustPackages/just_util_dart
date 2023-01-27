@@ -2,6 +2,7 @@
 ///
 /// 1. json에 원하는 Key가 있는지 확인
 /// 2. Key가 존재한다면, 결과 반환
+/// 3. Key가 존재하지 않는다면, null 반환
 ///
 /// - @type KeyType: json에서 찾고자하는 Key의 타입
 /// - @type ReturnType: json에서 해당 Key에 반환 해줄 것이라 생각하는 타입
