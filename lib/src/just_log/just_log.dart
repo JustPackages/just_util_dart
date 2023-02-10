@@ -142,7 +142,7 @@ class JustLog {
       if (currentStackString != '' && currentStackString.contains(filterKeywords)) {
         String removeSharp = currentStackString.split('#')[1];
         int firstSpaceIdx = removeSharp.indexOf(' ');
-        String removeNum = removeSharp.substring(firstSpaceIdx);
+        String removeNum = removeSharp.substring(firstSpaceIdx).trim();
 
         filteredList.add(removeNum);
       }
