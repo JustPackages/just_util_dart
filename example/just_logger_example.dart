@@ -1,7 +1,7 @@
 import 'package:just_util/just_util.dart';
 
 void main(List<String> args) {
-  // testJustLogWrite();
+  testJustLogWrite();
   testJustLogWriteCallStack();
 }
 
@@ -11,27 +11,27 @@ void testJustLogWrite() {
   String msg = 'JUST LOG Write';
 
   JustLog.write('\nFont Color Test');
-  JustLog.write(msg, fontColor: LogFontColor.black, backgroundColor: LogBackgroundColor.white);
-  JustLog.write(msg, fontColor: LogFontColor.red);
-  JustLog.write(msg, fontColor: LogFontColor.green);
-  JustLog.write(msg, fontColor: LogFontColor.yellow);
-  JustLog.write(msg, fontColor: LogFontColor.blue);
-  JustLog.write(msg, fontColor: LogFontColor.magenta);
-  JustLog.write(msg, fontColor: LogFontColor.cyan);
-  JustLog.write(msg, fontColor: LogFontColor.none);
+  JustLog.write(msg, fontColor: LogFontColor.black, backgroundColor: LogBackgroundColor.white, logBlock: 'TestLog');
+  JustLog.write(msg, fontColor: LogFontColor.red, logBlock: 'TestLog');
+  JustLog.write(msg, fontColor: LogFontColor.green, logBlock: 'TestLog');
+  JustLog.write(msg, fontColor: LogFontColor.yellow, logBlock: 'TestLog');
+  JustLog.write(msg, fontColor: LogFontColor.blue, logBlock: 'TestLog');
+  JustLog.write(msg, fontColor: LogFontColor.magenta, logBlock: 'TestLog');
+  JustLog.write(msg, fontColor: LogFontColor.cyan, logBlock: 'TestLog');
+  JustLog.write(msg, fontColor: LogFontColor.none, logBlock: 'TestLog');
 
   JustLog.write('');
 
   JustLog.write('Background Color Test');
-  JustLog.write(msg, fontColor: LogFontColor.white, backgroundColor: LogBackgroundColor.black);
-  JustLog.write(msg, fontColor: LogFontColor.white, backgroundColor: LogBackgroundColor.red);
-  JustLog.write(msg, fontColor: LogFontColor.white, backgroundColor: LogBackgroundColor.green);
-  JustLog.write(msg, fontColor: LogFontColor.white, backgroundColor: LogBackgroundColor.yellow);
-  JustLog.write(msg, fontColor: LogFontColor.white, backgroundColor: LogBackgroundColor.blue);
-  JustLog.write(msg, fontColor: LogFontColor.white, backgroundColor: LogBackgroundColor.magenta);
-  JustLog.write(msg, fontColor: LogFontColor.white, backgroundColor: LogBackgroundColor.cyan);
-  JustLog.write(msg, fontColor: LogFontColor.black, backgroundColor: LogBackgroundColor.white);
-  JustLog.write(msg, backgroundColor: LogBackgroundColor.none);
+  JustLog.write(msg, fontColor: LogFontColor.white, backgroundColor: LogBackgroundColor.black, logBlock: 'TestLog');
+  JustLog.write(msg, fontColor: LogFontColor.white, backgroundColor: LogBackgroundColor.red, logBlock: 'TestLog');
+  JustLog.write(msg, fontColor: LogFontColor.white, backgroundColor: LogBackgroundColor.green, logBlock: 'TestLog');
+  JustLog.write(msg, fontColor: LogFontColor.white, backgroundColor: LogBackgroundColor.yellow, logBlock: 'TestLog');
+  JustLog.write(msg, fontColor: LogFontColor.white, backgroundColor: LogBackgroundColor.blue, logBlock: 'TestLog');
+  JustLog.write(msg, fontColor: LogFontColor.white, backgroundColor: LogBackgroundColor.magenta, logBlock: 'TestLog');
+  JustLog.write(msg, fontColor: LogFontColor.white, backgroundColor: LogBackgroundColor.cyan, logBlock: 'TestLog');
+  JustLog.write(msg, fontColor: LogFontColor.black, backgroundColor: LogBackgroundColor.white, logBlock: 'TestLog');
+  JustLog.write(msg, backgroundColor: LogBackgroundColor.none, logBlock: 'TestLog');
 }
 
 void testJustLogWriteCallStack() {
