@@ -105,11 +105,13 @@ class JustLog {
     String msg, {
     LogFontColor? fontColor,
     LogBackgroundColor? backgroundColor,
+    String? logBlock,
   }) {
+    String finalLogBlock = logBlock != null ? '[$logBlock]' : '';
     String finalFontColor = fontColor == null ? '' : fontColor.toColorString();
     String finalBackground = backgroundColor == null ? '' : backgroundColor.toColorString();
 
-    print('$finalFontColor$finalBackground$msg\x1B[0m');
+    print('$finalFontColor$finalBackground$finalLogBlock$msg\x1B[0m');
   }
 
   /// Write Message with CallStack([StackTrace])
@@ -124,12 +126,11 @@ class JustLog {
     LogFontColor? fontColor,
     LogBackgroundColor? backgroundColor,
     String filterKeywords = '',
-    String logBlock = 'JustLog',
+    String? logBlock,
   }) {
-    String finalLogBlock = '[$logBlock]';
-
-    String resultMsg = '$finalLogBlock Call Stack ${"-" * 60}\n';
-    resultMsg += '$finalLogBlock message: $msg';
+    String finalLogBlock = logBlock != null ? '[$logBlock] ' : '';
+    String resultMsg = '${finalLogBlock}Call Stack ${"-" * 60}\n';
+    resultMsg += '${finalLogBlock}message: $msg';
 
     // 0번째는 JustLog.writeCallStack()이므로 제거
     final currentStackStrList = StackTrace.current.toString().split('\n').sublist(1);
@@ -151,11 +152,11 @@ class JustLog {
     for (int i = filteredList.length - 1; i >= 0; i--) {
       String currentString = filteredList[i];
       if (currentString != '' && currentString.contains(filterKeywords)) {
-        resultMsg += '\n$finalLogBlock #${(i + 1).toStringAtLeat2Digits()} $currentString';
+        resultMsg += '\n$finalLogBlock#${(i + 1).toStringAtLeat2Digits()}  $currentString';
       }
     }
 
-    resultMsg += '\n$finalLogBlock ${"-" * 71}\n';
+    resultMsg += '\n$finalLogBlock${"-" * 71}\n';
 
     write(resultMsg, fontColor: fontColor, backgroundColor: backgroundColor);
   }
