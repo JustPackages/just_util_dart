@@ -101,17 +101,41 @@ extension LogBackgroundColorExtension on LogBackgroundColor {
 }
 
 class JustLog {
-  static void write(
-    String msg, {
+  /// JustLog의 로그 형식
+  static String _justLogFormatter({
+    required String msg,
     LogFontColor? fontColor,
     LogBackgroundColor? backgroundColor,
     String? logBlock,
   }) {
     String finalLogBlock = logBlock != null ? '[$logBlock] ' : '';
     String finalFontColor = fontColor == null ? '' : fontColor.toColorString();
-    String finalBackground = backgroundColor == null ? '' : backgroundColor.toColorString();
+    String finalBackgroundColor = backgroundColor == null ? '' : backgroundColor.toColorString();
+    String finalDefaultColor = (fontColor != null || backgroundColor != null) ? '\x1B[0m' : '';
 
-    print('$finalFontColor$finalBackground$finalLogBlock$msg\x1B[0m');
+    return '$finalLogBlock$finalFontColor$finalBackgroundColor$msg$finalDefaultColor';
+  }
+
+  /// Write Message
+  ///
+  /// - @param [String] msg: 출력하고 싶은 내용
+  /// - @param [LogFontColor]? fontColor: 출력 글씨 색상
+  /// - @param [LogBackgroundColor]? backgroundColor: 출력 글씨 배경 색상
+  /// - @param [String] logBlock: 해당 함수를 통해 출력되는 모든 문장 앞에 쓰일 문자열
+  static void write(
+    String msg, {
+    LogFontColor? fontColor,
+    LogBackgroundColor? backgroundColor,
+    String? logBlock,
+  }) {
+    String finalMsg = _justLogFormatter(
+      msg: msg,
+      logBlock: logBlock,
+      fontColor: fontColor,
+      backgroundColor: backgroundColor,
+    );
+
+    print(finalMsg);
   }
 
   /// Write Message with CallStack([StackTrace])
