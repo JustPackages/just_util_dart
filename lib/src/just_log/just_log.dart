@@ -108,7 +108,7 @@ class JustLog {
     LogBackgroundColor? backgroundColor,
     String? logBlock,
   }) {
-    String finalLogBlock = logBlock != null ? '[$logBlock] ' : '';
+    String finalLogBlock = logBlock != null && logBlock != '' ? '[$logBlock] ' : '';
     String finalFontColor = fontColor == null ? '' : fontColor.toColorString();
     String finalBackgroundColor = backgroundColor == null ? '' : backgroundColor.toColorString();
     String finalDefaultColor = (fontColor != null || backgroundColor != null) ? '\x1B[0m' : '';
