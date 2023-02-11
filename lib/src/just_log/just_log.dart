@@ -1,104 +1,8 @@
+library just_util.just_log;
+
 import 'package:just_util/src/just_int/just_int.dart';
 
-enum LogFontColor {
-  black,
-  red,
-  green,
-  yellow,
-  blue,
-  magenta,
-  cyan,
-  white,
-  none,
-}
-
-extension LogFontColorExtension on LogFontColor {
-  String toColorString() {
-    String result = '\x1B[';
-
-    switch (this) {
-      case LogFontColor.black:
-        result += '30m';
-        break;
-      case LogFontColor.red:
-        result += '31m';
-        break;
-      case LogFontColor.green:
-        result += '32m';
-        break;
-      case LogFontColor.yellow:
-        result += '33m';
-        break;
-      case LogFontColor.blue:
-        result += '34m';
-        break;
-      case LogFontColor.magenta:
-        result += '35m';
-        break;
-      case LogFontColor.cyan:
-        result += '36m';
-        break;
-      case LogFontColor.white:
-        result += '37m';
-        break;
-      case LogFontColor.none:
-        result += '39m';
-        break;
-    }
-
-    return result;
-  }
-}
-
-enum LogBackgroundColor {
-  black,
-  red,
-  green,
-  yellow,
-  blue,
-  magenta,
-  cyan,
-  white,
-  none,
-}
-
-extension LogBackgroundColorExtension on LogBackgroundColor {
-  String toColorString() {
-    String result = '\x1B[';
-
-    switch (this) {
-      case LogBackgroundColor.black:
-        result += '40m';
-        break;
-      case LogBackgroundColor.red:
-        result += '41m';
-        break;
-      case LogBackgroundColor.green:
-        result += '42m';
-        break;
-      case LogBackgroundColor.yellow:
-        result += '43m';
-        break;
-      case LogBackgroundColor.blue:
-        result += '44m';
-        break;
-      case LogBackgroundColor.magenta:
-        result += '45m';
-        break;
-      case LogBackgroundColor.cyan:
-        result += '46m';
-        break;
-      case LogBackgroundColor.white:
-        result += '47m';
-        break;
-      case LogBackgroundColor.none:
-        result += '49m';
-        break;
-    }
-
-    return result;
-  }
-}
+part 'just_log_enums.dart';
 
 class JustLog {
   /// JustLog의 로그 형식
@@ -185,5 +89,86 @@ class JustLog {
 
     // End of Call Stack
     write("-" * 71, fontColor: fontColor, backgroundColor: backgroundColor, logBlock: logBlock);
+  }
+
+  /// JustLog의 로그 형식
+  static String _justLogEFormatter({
+    required String msg,
+    LogEmojiColor? logEmojiColor,
+    String? logBlock,
+  }) {
+    String finalLogBlock = logBlock != null && logBlock != '' ? '[$logBlock] ' : '';
+    String finalEmoji = logEmojiColor == null ? '' : '${logEmojiColor.toColorString()} ';
+
+    return '$finalLogBlock$finalEmoji$msg';
+  }
+
+  /// Write Message
+  ///
+  /// On Flutter development, iOS debugger doesn't print with color font or background on console.
+  /// So we need to add print with emoji.
+  ///
+  /// - @param [String] msg: 출력하고 싶은 내용
+  /// - @param [logBlock] logBlock: 해당 함수를 통해 출력되는 모든 문장 앞에 쓰일 문자열
+  /// - @param [LogEmojiColor] logEmojiColor: 이모지의 색상
+  static void eWrite(
+    String msg, {
+    String? logBlock,
+    LogEmojiColor? logEmojiColor,
+  }) {
+    String finalMsg = _justLogEFormatter(
+      msg: msg,
+      logBlock: logBlock,
+      logEmojiColor: logEmojiColor,
+    );
+
+    print(finalMsg);
+  }
+
+  /// Write Message with CallStack([StackTrace])
+  ///
+  /// - @param [String] msg: Call Stack 출력 전, 출력하고 싶은 메세지
+  /// - @param [logBlock] logBlock: 해당 함수를 통해 출력되는 모든 문장 앞에 쓰일 문자열
+  /// - @param [LogEmojiColor] logEmojiColor: 이모지의 색상
+  /// - @param [String] filterKeywords: 전체 호출 스택 중, filterKeywords가 포함된 호출 스택만 출력
+  /// - @param [int] maxStack: 최대로 추적할 StackTrace의 수, 지정하지 않을 시 호출 스택 전부 출력
+  static void eWriteCallStack(
+    String msg, {
+    String? logBlock,
+    LogEmojiColor? logEmojiColor,
+    String filterKeyword = '',
+    int? maxStack,
+  }) {
+    // Start of Call Stack
+    eWrite('Call Stack ${"-" * 60}', logEmojiColor: logEmojiColor, logBlock: logBlock);
+
+    // User's input message
+    eWrite('message: $msg', logEmojiColor: logEmojiColor, logBlock: logBlock);
+
+    // 0번째는 JustLog.writeCallStack()이므로 제거
+    final currentStackStrList = StackTrace.current.toString().split('\n').sublist(1);
+
+    int stackCounter = 1;
+
+    // 1. filterKeywords를 포함하고 있는 CallStack을 걸러냄
+    // 2. 기존 호출 번호 제거
+    // 3. 새로운 호출 번호 제거
+    for (String currentStackString in currentStackStrList) {
+      if (currentStackString != '' && currentStackString.contains(filterKeyword)) {
+        String removeSharp = currentStackString.split('#')[1];
+        int firstSpaceIdx = removeSharp.indexOf(' ');
+        String removeNum = removeSharp.substring(firstSpaceIdx).trim();
+
+        String stackMsg = '#${stackCounter.toStringAtLeat2Digits()}  $removeNum';
+
+        eWrite(stackMsg, logEmojiColor: logEmojiColor, logBlock: logBlock);
+        stackCounter += 1;
+      }
+
+      if (maxStack != null && stackCounter > maxStack) break;
+    }
+
+    // End of Call Stack
+    eWrite("-" * 71, logEmojiColor: logEmojiColor, logBlock: logBlock);
   }
 }
