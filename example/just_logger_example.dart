@@ -39,10 +39,29 @@ void testJustLogWriteCallStack() {
 
   void innerCallStack10() {
     JustLog.writeCallStack(
-      'Check Call Stack Message~!',
+      'Check Call Stack without filterKeyword',
       fontColor: LogFontColor.green,
-      filterKeywords: '',
+      filterKeyword: '',
       logBlock: 'TestLog',
+    );
+
+    JustLog.write('');
+
+    JustLog.writeCallStack(
+      'Check Call Stack with filterKeyword',
+      fontColor: LogFontColor.yellow,
+      filterKeyword: 'testJustLogWriteCallStack',
+      logBlock: 'TestLog',
+    );
+
+    JustLog.write('');
+
+    JustLog.writeCallStack(
+      'Check Call Stack with maxStack',
+      fontColor: LogFontColor.green,
+      filterKeyword: '',
+      logBlock: 'TestLog',
+      maxStack: 5,
     );
   }
 
