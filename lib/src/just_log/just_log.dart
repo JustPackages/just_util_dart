@@ -154,11 +154,11 @@ class JustLog {
     String filterKeyword = '',
     int? maxStack,
   }) {
-    // 출력하고자하는 메세지 보관 리스트
-    List<String> messageBucket = [];
+    // Start of Call Stack
+    write('Call Stack ${"-" * 60}', fontColor: fontColor, backgroundColor: backgroundColor, logBlock: logBlock);
 
-    messageBucket.add('Call Stack ${"-" * 60}'); // Start of Call Stack
-    messageBucket.add('message: $msg'); // User's input message
+    // User's input message
+    write('message: $msg', fontColor: fontColor, backgroundColor: backgroundColor, logBlock: logBlock);
 
     // 0번째는 JustLog.writeCallStack()이므로 제거
     final currentStackStrList = StackTrace.current.toString().split('\n').sublist(1);
@@ -176,22 +176,14 @@ class JustLog {
 
         String stackMsg = '#${stackCounter.toStringAtLeat2Digits()}  $removeNum';
 
-        messageBucket.add(stackMsg);
+        write(stackMsg, fontColor: fontColor, backgroundColor: backgroundColor, logBlock: logBlock);
         stackCounter += 1;
       }
 
       if (maxStack != null && stackCounter > maxStack) break;
     }
 
-    messageBucket.add("-" * 71); // End of Call Stack
-
-    for (String callStackMsg in messageBucket) {
-      write(
-        callStackMsg,
-        fontColor: fontColor,
-        backgroundColor: backgroundColor,
-        logBlock: logBlock,
-      );
-    }
+    // End of Call Stack
+    write("-" * 71, fontColor: fontColor, backgroundColor: backgroundColor, logBlock: logBlock);
   }
 }
