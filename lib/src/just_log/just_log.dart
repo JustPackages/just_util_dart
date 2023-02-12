@@ -73,8 +73,18 @@ class JustLog {
     // 2. 기존 호출 번호 제거
     // 3. 새로운 호출 번호 제거
     for (String currentStackString in currentStackStrList) {
+      if (maxStack != null && stackCounter > maxStack) break;
+
       if (currentStackString != '' && currentStackString.contains(filterKeyword)) {
-        String removeSharp = currentStackString.split('#')[1];
+        List<String> sharpSplitted = currentStackString.split('#');
+
+        // <asynchronous suspension> 과 같이 인덱싱이 되지 않은 CallStack들은 그냥 출력하도록 처리
+        if (sharpSplitted.length < 2) {
+          write(currentStackString, fontColor: fontColor, backgroundColor: backgroundColor, logBlock: logBlock);
+          continue;
+        }
+
+        String removeSharp = sharpSplitted[1];
         int firstSpaceIdx = removeSharp.indexOf(' ');
         String removeNum = removeSharp.substring(firstSpaceIdx).trim();
 
@@ -83,8 +93,6 @@ class JustLog {
         write(stackMsg, fontColor: fontColor, backgroundColor: backgroundColor, logBlock: logBlock);
         stackCounter += 1;
       }
-
-      if (maxStack != null && stackCounter > maxStack) break;
     }
 
     // End of Call Stack

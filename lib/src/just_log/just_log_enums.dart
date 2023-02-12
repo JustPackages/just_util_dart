@@ -13,6 +13,7 @@ enum LogFontColor {
 }
 
 extension LogFontColorExtension on LogFontColor {
+  /// [LogFontColor] to ansi code
   String toColorString() {
     String result = '\x1B[';
 
@@ -63,6 +64,7 @@ enum LogBackgroundColor {
 }
 
 extension LogBackgroundColorExtension on LogBackgroundColor {
+  /// [LogBackgroundColor] to ansi code
   String toColorString() {
     String result = '\x1B[';
 
@@ -124,6 +126,7 @@ enum LogEmojiColor {
 }
 
 extension LogEmojiColorExtension on LogEmojiColor {
+  /// [LogEmojiColor] to emoji
   String toColorString() {
     String result = '';
 
