@@ -1,71 +1,62 @@
 library just_util.just_log;
 
+import 'dart:developer' as dev;
+
 import 'package:just_util/src/just_int/just_int.dart';
 
+part 'just_log_config.dart';
 part 'just_log_enums.dart';
 
 class JustLog {
-  /// JustLog의 로그 형식
-  static String _justLogFormatter({
-    required String msg,
-    LogFontColor? fontColor,
-    LogBackgroundColor? backgroundColor,
-    String? logBlock,
-  }) {
-    String finalLogBlock = logBlock != null && logBlock != '' ? '[$logBlock] ' : '';
-    String finalFontColor = fontColor == null ? '' : fontColor.toColorString();
-    String finalBackgroundColor = backgroundColor == null ? '' : backgroundColor.toColorString();
-    String finalDefaultColor = (fontColor != null || backgroundColor != null) ? '\x1B[0m' : '';
+  static String _formatter(String msg, {JustLogConfig? config}) {
+    if (config != null) {
+      String logBlockFront = '';
+      String logBlockRear = '';
 
-    return '$finalLogBlock$finalFontColor$finalBackgroundColor$msg$finalDefaultColor';
+      if (config.logBlockFontColor != null) {
+        logBlockFront += config.logBlockFontColor!.toColorString();
+        logBlockRear += LogFontColor.none.toColorString();
+      }
+
+      if (config.logBlockBackgroundColor != null) {
+        logBlockFront += config.logBlockBackgroundColor!.toColorString();
+        logBlockRear += LogBackgroundColor.none.toColorString();
+      }
+
+      String finalLogBlock = config.logBlock != null && config.logBlock != '' ? '$logBlockFront [$config.logBlock] $logBlockRear ' : '';
+
+      String finalFontColor = config.fontColor?.toColorString() ?? '';
+      String finalBackgroundColor = config.backgroundColor?.toColorString() ?? '';
+      String finalDefaultColor = '\x1B[0m';
+
+      return '$finalLogBlock$finalFontColor$finalBackgroundColor$msg$finalDefaultColor';
+    }
+
+    return msg;
   }
 
-  /// Write Message
-  ///
-  /// - @param [String] msg: 출력하고 싶은 내용
-  /// - @param [LogFontColor]? fontColor: 출력 글씨 색상
-  /// - @param [LogBackgroundColor]? backgroundColor: 출력 글씨 배경 색상
-  /// - @param [String] logBlock: 해당 함수를 통해 출력되는 모든 문장 앞에 쓰일 문자열
-  static void write(
-    String msg, {
-    LogFontColor? fontColor,
-    LogBackgroundColor? backgroundColor,
-    String? logBlock,
-  }) {
-    String finalMsg = _justLogFormatter(
-      msg: msg,
-      logBlock: logBlock,
-      fontColor: fontColor,
-      backgroundColor: backgroundColor,
-    );
+  static String _eFormatter(String msg, {JustLogConfig? config}) {
+    if (config != null) {
+      String finalLogBlock = config.logBlock != null && config.logBlock != '' ? '[$config.logBlock] ' : '';
+      String finalEmoji = config.logEmojiColor?.toColorString() ?? '';
 
-    print(finalMsg);
+      return '$finalLogBlock$finalEmoji$msg';
+    }
+
+    return msg;
   }
 
-  /// Write Message with CallStack([StackTrace])
-  ///
-  /// - @param [String] msg: Call Stack 출력 전, 출력하고 싶은 메세지
-  /// - @param [LogFontColor]? fontColor: 출력 글씨 색상
-  /// - @param [LogBackgroundColor]? backgroundColor: 출력 글씨 배경 색상
-  /// - @param [String] filterKeywords: 전체 호출 스택 중, filterKeywords가 포함된 호출 스택만 출력
-  /// - @param [logBlock] logBlock: 해당 함수를 통해 출력되는 모든 문장 앞에 쓰일 문자열
-  /// - @param [int] maxStack: 최대로 추적할 StackTrace의 수, 지정하지 않을 시 호출 스택 전부 출력
-  static void writeCallStack(
-    String msg, {
-    LogFontColor? fontColor,
-    LogBackgroundColor? backgroundColor,
-    String? logBlock,
+  static String _callStack({
+    required String Function(String msg, {JustLogConfig? config}) formatter,
+    JustLogConfig? config,
     String filterKeyword = '',
     int? maxStack,
   }) {
-    // Start of Call Stack
-    write('Call Stack ${"-" * 60}', fontColor: fontColor, backgroundColor: backgroundColor, logBlock: logBlock);
+    List<String> stackStrList = [];
 
-    // User's input message
-    write('message: $msg', fontColor: fontColor, backgroundColor: backgroundColor, logBlock: logBlock);
-
-    // 0번째는 JustLog.writeCallStack()이므로 제거
-    final currentStackStrList = StackTrace.current.toString().split('\n').sublist(1);
+    // 0번째는 _callStack이므로 제거
+    // 1번째는 _callStack을 호출한 함수이므로 제거
+    final currentStackStrList = StackTrace.current.toString().split('\n').sublist(2);
 
     int stackCounter = 1;
 
@@ -80,7 +71,7 @@ class JustLog {
 
         // <asynchronous suspension> 과 같이 인덱싱이 되지 않은 CallStack들은 그냥 출력하도록 처리
         if (sharpSplitted.length < 2) {
-          write(currentStackString, fontColor: fontColor, backgroundColor: backgroundColor, logBlock: logBlock);
+          stackStrList.add(_formatter(currentStackString, config: config));
           continue;
         }
 
@@ -90,93 +81,173 @@ class JustLog {
 
         String stackMsg = '#${stackCounter.toStringAtLeat2Digits()}  $removeNum';
 
-        write(stackMsg, fontColor: fontColor, backgroundColor: backgroundColor, logBlock: logBlock);
+        stackStrList.add(_formatter(stackMsg, config: config));
         stackCounter += 1;
       }
     }
 
-    // End of Call Stack
-    write("-" * 71, fontColor: fontColor, backgroundColor: backgroundColor, logBlock: logBlock);
+    String result = stackStrList.join('\n');
+
+    return result;
   }
 
-  /// JustLog의 로그 형식
-  static String _justLogEFormatter({
-    required String msg,
-    LogEmojiColor? logEmojiColor,
-    String? logBlock,
-  }) {
-    String finalLogBlock = logBlock != null && logBlock != '' ? '[$logBlock] ' : '';
-    String finalEmoji = logEmojiColor == null ? '' : '${logEmojiColor.toColorString()} ';
+  /// Log 함수 이용 출력
+  /// - 폰트 색상 사용 [LogFontColor]
+  /// - 배경 색상 사용 [LogBackgroundColor]
+  static void log(String msg, {JustLogConfig? config}) {
+    String finalMsg = _formatter(msg, config: config);
 
-    return '$finalLogBlock$finalEmoji$msg';
+    Future.delayed(Duration.zero).whenComplete(() {
+      dev.log(finalMsg);
+    });
   }
 
-  /// Write Message
-  ///
-  /// On Flutter development, iOS debugger doesn't print with color font or background on console.
-  /// So we need to add print with emoji.
-  ///
-  /// - @param [String] msg: 출력하고 싶은 내용
-  /// - @param [logBlock] logBlock: 해당 함수를 통해 출력되는 모든 문장 앞에 쓰일 문자열
-  /// - @param [LogEmojiColor] logEmojiColor: 이모지의 색상
-  static void eWrite(
-    String msg, {
-    String? logBlock,
-    LogEmojiColor? logEmojiColor,
-  }) {
-    String finalMsg = _justLogEFormatter(
-      msg: msg,
-      logBlock: logBlock,
-      logEmojiColor: logEmojiColor,
-    );
+  /// print 함수 이용 출력
+  /// - 폰트 색상 사용 [LogFontColor]
+  /// - 배경 색상 사용 [LogBackgroundColor]
+  static void write(String msg, {JustLogConfig? config}) {
+    String finalMsg = _formatter(msg, config: config);
 
     print(finalMsg);
   }
 
-  /// Write Message with CallStack([StackTrace])
-  ///
-  /// - @param [String] msg: Call Stack 출력 전, 출력하고 싶은 메세지
-  /// - @param [logBlock] logBlock: 해당 함수를 통해 출력되는 모든 문장 앞에 쓰일 문자열
-  /// - @param [LogEmojiColor] logEmojiColor: 이모지의 색상
-  /// - @param [String] filterKeywords: 전체 호출 스택 중, filterKeywords가 포함된 호출 스택만 출력
-  /// - @param [int] maxStack: 최대로 추적할 StackTrace의 수, 지정하지 않을 시 호출 스택 전부 출력
-  static void eWriteCallStack(
+  /// Log 함수 이용 출력
+  /// - 색상 이모지 사용 [LogEmojiColor]
+  static void eLog(String msg, {JustLogConfig? config}) {
+    String finalMsg = _eFormatter(msg, config: config);
+
+    dev.log(finalMsg);
+  }
+
+  /// print 함수 이용 출력
+  /// - 색상 이모지 사용 [LogEmojiColor]
+  static void eWrite(String msg, {JustLogConfig? config}) {
+    String finalMsg = _eFormatter(msg, config: config);
+
+    print(finalMsg);
+  }
+
+  static void logCallStack(
     String msg, {
-    String? logBlock,
-    LogEmojiColor? logEmojiColor,
+    JustLogConfig? config,
     String filterKeyword = '',
     int? maxStack,
   }) {
+    List<String> logMsg = [];
+
     // Start of Call Stack
-    eWrite('Call Stack ${"-" * 60}', logEmojiColor: logEmojiColor, logBlock: logBlock);
+    logMsg.add(_formatter('Call Stack ${"-" * 60}', config: config));
 
     // User's input message
-    eWrite('message: $msg', logEmojiColor: logEmojiColor, logBlock: logBlock);
+    logMsg.add(_formatter('message: $msg', config: config));
 
-    // 0번째는 JustLog.writeCallStack()이므로 제거
-    final currentStackStrList = StackTrace.current.toString().split('\n').sublist(1);
+    String callStackStr = _callStack(
+      formatter: _formatter,
+      config: config,
+      filterKeyword: filterKeyword,
+      maxStack: maxStack,
+    );
 
-    int stackCounter = 1;
-
-    // 1. filterKeywords를 포함하고 있는 CallStack을 걸러냄
-    // 2. 기존 호출 번호 제거
-    // 3. 새로운 호출 번호 제거
-    for (String currentStackString in currentStackStrList) {
-      if (currentStackString != '' && currentStackString.contains(filterKeyword)) {
-        String removeSharp = currentStackString.split('#')[1];
-        int firstSpaceIdx = removeSharp.indexOf(' ');
-        String removeNum = removeSharp.substring(firstSpaceIdx).trim();
-
-        String stackMsg = '#${stackCounter.toStringAtLeat2Digits()}  $removeNum';
-
-        eWrite(stackMsg, logEmojiColor: logEmojiColor, logBlock: logBlock);
-        stackCounter += 1;
-      }
-
-      if (maxStack != null && stackCounter > maxStack) break;
-    }
+    logMsg.add(callStackStr);
 
     // End of Call Stack
-    eWrite("-" * 71, logEmojiColor: logEmojiColor, logBlock: logBlock);
+    logMsg.add(_formatter("-" * 71, config: config));
+
+    String finalMsg = logMsg.join('\n');
+
+    log(finalMsg);
+  }
+
+  static void writeCallStack(
+    String msg, {
+    JustLogConfig? config,
+    String filterKeyword = '',
+    int? maxStack,
+  }) {
+    List<String> logMsg = [];
+
+    // Start of Call Stack
+    logMsg.add(_formatter('Call Stack ${"-" * 60}', config: config));
+
+    // User's input message
+    logMsg.add(_formatter('message: $msg', config: config));
+
+    String callStackStr = _callStack(
+      formatter: _formatter,
+      config: config,
+      filterKeyword: filterKeyword,
+      maxStack: maxStack,
+    );
+
+    logMsg.add(callStackStr);
+
+    // End of Call Stack
+    logMsg.add(_formatter("-" * 71, config: config));
+
+    String finalMsg = logMsg.join('\n');
+
+    write(finalMsg);
+  }
+
+   static void eLogCallStack(
+    String msg, {
+    JustLogConfig? config,
+    String filterKeyword = '',
+    int? maxStack,
+  }) {
+    List<String> logMsg = [];
+
+    // Start of Call Stack
+    logMsg.add(_eFormatter('Call Stack ${"-" * 60}', config: config));
+
+    // User's input message
+    logMsg.add(_eFormatter('message: $msg', config: config));
+
+    String callStackStr = _callStack(
+      formatter: _eFormatter,
+      config: config,
+      filterKeyword: filterKeyword,
+      maxStack: maxStack,
+    );
+
+    logMsg.add(callStackStr);
+
+    // End of Call Stack
+    logMsg.add(_eFormatter("-" * 71, config: config));
+
+    String finalMsg = logMsg.join('\n');
+
+    log(finalMsg);
+  }
+
+  static void eWriteCallStack(
+    String msg, {
+    JustLogConfig? config,
+    String filterKeyword = '',
+    int? maxStack,
+  }) {
+    List<String> logMsg = [];
+
+    // Start of Call Stack
+    logMsg.add(_eFormatter('Call Stack ${"-" * 60}', config: config));
+
+    // User's input message
+    logMsg.add(_eFormatter('message: $msg', config: config));
+
+    String callStackStr = _callStack(
+      formatter: _eFormatter,
+      config: config,
+      filterKeyword: filterKeyword,
+      maxStack: maxStack,
+    );
+
+    logMsg.add(callStackStr);
+
+    // End of Call Stack
+    logMsg.add(_eFormatter("-" * 71, config: config));
+
+    String finalMsg = logMsg.join('\n');
+
+    write(finalMsg);
   }
 }
