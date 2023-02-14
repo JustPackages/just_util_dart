@@ -41,12 +41,6 @@ void justLogSample() {
     fontColor: LogFontColor.brightBlue,
   );
 
-  JustLogConfig customlogCallStackConfig = JustLogConfig(
-    block: '⛔️|Check!',
-    blockFontColor: LogFontColor.brightRed,
-    fontColor: LogFontColor.brightGreen,
-  );
-
   JustLog.write('hello, this is msg', config: msgLogConfig);
   JustLog.write('hello, this is info', config: infoLogConfig);
   JustLog.write('hello, this is warning', config: warningLogConfig);
