@@ -1,203 +1,183 @@
 import 'package:just_util/just_util.dart';
 
 void main(List<String> args) {
-  testJustLogWrite();
-  testJustLogWriteCallStack();
-  testJustLogEWrite();
-  testJustLogEWriteCallStack();
+  justLogSample();
+  justLogSampleDevLog();
+  justLogEmojisample();
 }
 
-void testJustLogWrite() {
-  JustLog.write('\n<TEST JUST LOG Write>');
+void justLogSample() {
+  String thisBlock = 'JustLogSample';
 
-  String msg = 'JUST LOG Write';
+  JustLogConfig msgLogConfig = JustLogConfig(
+    block: thisBlock,
+    fontColor: LogFontColor.brightBlue,
+  );
 
-  JustLog.write('\nFont Color Test');
-  JustLog.write(msg, fontColor: LogFontColor.black, backgroundColor: LogBackgroundColor.white, logBlock: 'TestLog');
-  JustLog.write(msg, fontColor: LogFontColor.red, logBlock: 'TestLog');
-  JustLog.write(msg, fontColor: LogFontColor.green, logBlock: 'TestLog');
-  JustLog.write(msg, fontColor: LogFontColor.yellow, logBlock: 'TestLog');
-  JustLog.write(msg, fontColor: LogFontColor.blue, logBlock: 'TestLog');
-  JustLog.write(msg, fontColor: LogFontColor.magenta, logBlock: 'TestLog');
-  JustLog.write(msg, fontColor: LogFontColor.cyan, logBlock: 'TestLog');
-  JustLog.write(msg, fontColor: LogFontColor.none, logBlock: 'TestLog');
+  JustLogConfig infoLogConfig = JustLogConfig(
+    block: thisBlock,
+    fontColor: LogFontColor.green,
+  );
 
-  JustLog.write('');
+  JustLogConfig warningLogConfig = JustLogConfig(
+    block: thisBlock,
+    fontColor: LogFontColor.yellow,
+  );
 
-  JustLog.write('Background Color Test');
-  JustLog.write(msg, fontColor: LogFontColor.white, backgroundColor: LogBackgroundColor.black, logBlock: 'TestLog');
-  JustLog.write(msg, fontColor: LogFontColor.white, backgroundColor: LogBackgroundColor.red, logBlock: 'TestLog');
-  JustLog.write(msg, fontColor: LogFontColor.white, backgroundColor: LogBackgroundColor.green, logBlock: 'TestLog');
-  JustLog.write(msg, fontColor: LogFontColor.white, backgroundColor: LogBackgroundColor.yellow, logBlock: 'TestLog');
-  JustLog.write(msg, fontColor: LogFontColor.white, backgroundColor: LogBackgroundColor.blue, logBlock: 'TestLog');
-  JustLog.write(msg, fontColor: LogFontColor.white, backgroundColor: LogBackgroundColor.magenta, logBlock: 'TestLog');
-  JustLog.write(msg, fontColor: LogFontColor.white, backgroundColor: LogBackgroundColor.cyan, logBlock: 'TestLog');
-  JustLog.write(msg, fontColor: LogFontColor.black, backgroundColor: LogBackgroundColor.white, logBlock: 'TestLog');
-  JustLog.write(msg, backgroundColor: LogBackgroundColor.none, logBlock: 'TestLog');
-}
+  JustLogConfig errorLogConfig = JustLogConfig(
+    block: thisBlock,
+    fontColor: LogFontColor.brightRed,
+  );
 
-void testJustLogWriteCallStack() {
-  JustLog.write('\n<TEST JUST LOG Write CallStack>\n');
+  JustLogConfig customConfig = JustLogConfig(
+    block: '👻|Surprise',
+    blockFontColor: LogFontColor.brightYellow,
+    fontColor: LogFontColor.brightMagenta,
+  );
 
-  void innerCallStack10() {
+  JustLogConfig customCallStackConfig = JustLogConfig(
+    block: '⛔️|Check!',
+    blockFontColor: LogFontColor.brightRed,
+    fontColor: LogFontColor.brightBlue,
+  );
+
+  JustLog.write('hello, this is msg', config: msgLogConfig);
+  JustLog.write('hello, this is info', config: infoLogConfig);
+  JustLog.write('hello, this is warning', config: warningLogConfig);
+  JustLog.write('hello, this is error', config: errorLogConfig);
+
+  JustLog.write('boo ~~', config: customConfig);
+
+  callStackTester(() {
     JustLog.writeCallStack(
-      'Check Call Stack without filterKeyword',
-      fontColor: LogFontColor.green,
-      filterKeyword: '',
-      logBlock: 'TestLog',
+      'hello, this is Call Stack',
+      config: customCallStackConfig,
+      maxStack: 10,
     );
-
-    JustLog.write('');
-
-    JustLog.writeCallStack(
-      'Check Call Stack with filterKeyword',
-      fontColor: LogFontColor.yellow,
-      filterKeyword: 'testJustLogWriteCallStack',
-      logBlock: 'TestLog',
-    );
-
-    JustLog.write('');
-
-    JustLog.writeCallStack(
-      'Check Call Stack with maxStack',
-      fontColor: LogFontColor.green,
-      filterKeyword: '',
-      logBlock: 'TestLog',
-      maxStack: 5,
-    );
-  }
-
-  void innerCallStack9() {
-    innerCallStack10();
-  }
-
-  void innerCallStack8() {
-    innerCallStack9();
-  }
-
-  void innerCallStack7() {
-    innerCallStack8();
-  }
-
-  void innerCallStack6() {
-    innerCallStack7();
-  }
-
-  void innerCallStack5() {
-    innerCallStack6();
-  }
-
-  void innerCallStack4() {
-    innerCallStack5();
-  }
-
-  void innerCallStack3() {
-    innerCallStack4();
-  }
-
-  void innerCallStack2() {
-    innerCallStack3();
-  }
-
-  void innerCallStack1() {
-    innerCallStack2();
-  }
-
-  innerCallStack1();
+  });
 }
 
-void testJustLogEWrite() {
-  JustLog.write('\n<TEST JUST LOG Write>');
+void justLogSampleDevLog() {
+  String thisBlock = 'JustLogSample';
 
-  String msg = 'JUST LOG eWrite';
+  JustLogConfig msgLogConfig = JustLogConfig(
+    block: thisBlock,
+    fontColor: LogFontColor.brightBlue,
+  );
 
-  JustLog.eWrite('\nEmoji Test');
-  JustLog.eWrite(msg, logEmojiColor: LogEmojiColor.blackCircle, logBlock: 'TestLog');
-  JustLog.eWrite(msg, logEmojiColor: LogEmojiColor.redCircle, logBlock: 'TestLog');
-  JustLog.eWrite(msg, logEmojiColor: LogEmojiColor.greenCircle, logBlock: 'TestLog');
-  JustLog.eWrite(msg, logEmojiColor: LogEmojiColor.yellowCircle, logBlock: 'TestLog');
-  JustLog.eWrite(msg, logEmojiColor: LogEmojiColor.blueCircle, logBlock: 'TestLog');
-  JustLog.eWrite(msg, logEmojiColor: LogEmojiColor.magentaCircle, logBlock: 'TestLog');
-  JustLog.eWrite(msg, logEmojiColor: LogEmojiColor.whiteCircle, logBlock: 'TestLog');
+  JustLogConfig infoLogConfig = JustLogConfig(
+    block: thisBlock,
+    fontColor: LogFontColor.green,
+  );
 
-  JustLog.eWrite('');
+  JustLogConfig warningLogConfig = JustLogConfig(
+    block: thisBlock,
+    fontColor: LogFontColor.yellow,
+  );
 
-  JustLog.eWrite(msg, logEmojiColor: LogEmojiColor.blackSquare, logBlock: 'TestLog');
-  JustLog.eWrite(msg, logEmojiColor: LogEmojiColor.redSquare, logBlock: 'TestLog');
-  JustLog.eWrite(msg, logEmojiColor: LogEmojiColor.greenSquare, logBlock: 'TestLog');
-  JustLog.eWrite(msg, logEmojiColor: LogEmojiColor.yellowSquare, logBlock: 'TestLog');
-  JustLog.eWrite(msg, logEmojiColor: LogEmojiColor.blueSquare, logBlock: 'TestLog');
-  JustLog.eWrite(msg, logEmojiColor: LogEmojiColor.magentaSquare, logBlock: 'TestLog');
-  JustLog.eWrite(msg, logEmojiColor: LogEmojiColor.whiteSquare, logBlock: 'TestLog');
-  JustLog.eWrite(msg, logEmojiColor: LogEmojiColor.none, logBlock: 'TestLog');
+  JustLogConfig errorLogConfig = JustLogConfig(
+    block: thisBlock,
+    fontColor: LogFontColor.brightRed,
+  );
+
+  JustLogConfig customConfig = JustLogConfig(
+    block: '👻|Surprise',
+    blockFontColor: LogFontColor.brightYellow,
+    fontColor: LogFontColor.brightMagenta,
+  );
+
+  JustLogConfig customCallStackConfig = JustLogConfig(
+    block: '⛔️|Check!',
+    blockFontColor: LogFontColor.brightRed,
+    fontColor: LogFontColor.brightGreen,
+  );
+
+  JustLog.log('hello, this is msg', config: msgLogConfig);
+  JustLog.log('hello, this is info', config: infoLogConfig);
+  JustLog.log('hello, this is warning', config: warningLogConfig);
+  JustLog.log('hello, this is error', config: errorLogConfig);
+
+  JustLog.log('boo ~~', config: customConfig);
+
+  callStackTester(() {
+    JustLog.logCallStack(
+      'hello, this is Call Stack',
+      config: customCallStackConfig,
+      maxStack: 10,
+    );
+  });
+
+  Future.delayed(Duration(seconds: 2));
 }
 
-void testJustLogEWriteCallStack() {
-  JustLog.write('\n<TEST JUST LOG Write CallStack>\n');
+void justLogEmojisample() {
+  String thisBlock = 'JustLogEmojiSample';
 
-  void innerCallStack10() {
-    JustLog.eWriteCallStack(
-      'Check Call Stack without filterKeyword',
-      logEmojiColor: LogEmojiColor.greenSquare,
-      filterKeyword: '',
-      logBlock: 'TestLog',
+  JustLogEmojiConfig msgLogConfig = JustLogEmojiConfig(
+    block: thisBlock,
+    emojiColor: LogEmojiColor.blueSquare,
+  );
+
+  JustLogEmojiConfig infoLogConfig = JustLogEmojiConfig(
+    block: thisBlock,
+    emojiColor: LogEmojiColor.greenSquare,
+  );
+
+  JustLogEmojiConfig warningLogConfig = JustLogEmojiConfig(
+    block: thisBlock,
+    emojiColor: LogEmojiColor.yellowSquare,
+  );
+
+  JustLogEmojiConfig errorLogConfig = JustLogEmojiConfig(
+    block: thisBlock,
+    emojiColor: LogEmojiColor.redSquare,
+  );
+
+  JustLogEmojiConfig customConfig = JustLogEmojiConfig(
+    block: '👻|Surprise',
+    emojiColor: LogEmojiColor.yellowCircle,
+  );
+
+  JustLogEmoji.write('hello, this is msg', config: msgLogConfig);
+  JustLogEmoji.write('hello, this is info', config: infoLogConfig);
+  JustLogEmoji.write('hello, this is warning', config: warningLogConfig);
+  JustLogEmoji.write('hello, this is error', config: errorLogConfig);
+
+  JustLogEmoji.write('boo ~~~', config: customConfig);
+
+  callStackTester(() {
+    JustLogEmoji.writeCallStack(
+      'hello, this is Call Stack',
+      config: msgLogConfig,
+      filterKeyword: 'callStackTester',
     );
+  });
+}
 
-    JustLog.eWrite('');
-
-    JustLog.eWriteCallStack(
-      'Check Call Stack with filterKeyword',
-      logEmojiColor: LogEmojiColor.yellowCircle,
-      filterKeyword: 'testJustLogEWriteCallStack',
-      logBlock: 'TestLog',
-    );
-
-    JustLog.eWrite('');
-
-    JustLog.eWriteCallStack(
-      'Check Call Stack with maxStack',
-      logEmojiColor: LogEmojiColor.greenCircle,
-      filterKeyword: '',
-      logBlock: 'TestLog',
-      maxStack: 5,
-    );
+void callStackTester(Function bodyFunc) {
+  void innerCaller6() {
+    bodyFunc();
   }
 
-  void innerCallStack9() {
-    innerCallStack10();
+  void innerCaller5() {
+    innerCaller6();
   }
 
-  void innerCallStack8() {
-    innerCallStack9();
+  void innerCaller4() {
+    innerCaller5();
   }
 
-  void innerCallStack7() {
-    innerCallStack8();
+  void innerCaller3() {
+    innerCaller4();
   }
 
-  void innerCallStack6() {
-    innerCallStack7();
+  void innerCaller2() {
+    innerCaller3();
   }
 
-  void innerCallStack5() {
-    innerCallStack6();
+  void innerCaller1() {
+    innerCaller2();
   }
 
-  void innerCallStack4() {
-    innerCallStack5();
-  }
-
-  void innerCallStack3() {
-    innerCallStack4();
-  }
-
-  void innerCallStack2() {
-    innerCallStack3();
-  }
-
-  void innerCallStack1() {
-    innerCallStack2();
-  }
-
-  innerCallStack1();
+  innerCaller1();
 }
