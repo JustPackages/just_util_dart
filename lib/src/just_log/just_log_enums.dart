@@ -1,6 +1,7 @@
 part of just_util.just_log;
 
 enum LogFontColor {
+  // normal
   black,
   red,
   green,
@@ -9,6 +10,17 @@ enum LogFontColor {
   magenta,
   cyan,
   white,
+
+  // bright
+  brightBlack,
+  brightRed,
+  brightGreen,
+  brightYellow,
+  brightBlue,
+  brightMagenta,
+  brightCyan,
+  brightWhite,
+
   none,
 }
 
@@ -42,6 +54,30 @@ extension LogFontColorExtension on LogFontColor {
       case LogFontColor.white:
         result += '37m';
         break;
+      case LogFontColor.brightBlack:
+        result += '90m';
+        break;
+      case LogFontColor.brightRed:
+        result += '91m';
+        break;
+      case LogFontColor.brightGreen:
+        result += '92m';
+        break;
+      case LogFontColor.brightYellow:
+        result += '93m';
+        break;
+      case LogFontColor.brightBlue:
+        result += '94m';
+        break;
+      case LogFontColor.brightMagenta:
+        result += '95m';
+        break;
+      case LogFontColor.brightCyan:
+        result += '96m';
+        break;
+      case LogFontColor.brightWhite:
+        result += '97m';
+        break;
       case LogFontColor.none:
         result += '39m';
         break;
@@ -52,6 +88,7 @@ extension LogFontColorExtension on LogFontColor {
 }
 
 enum LogBackgroundColor {
+  // normal
   black,
   red,
   green,
@@ -60,6 +97,17 @@ enum LogBackgroundColor {
   magenta,
   cyan,
   white,
+
+  // bright
+  brightBlack,
+  brightRed,
+  brightGreen,
+  brightYellow,
+  brightBlue,
+  brightMagenta,
+  brightCyan,
+  brightWhite,
+
   none,
 }
 
@@ -92,6 +140,30 @@ extension LogBackgroundColorExtension on LogBackgroundColor {
         break;
       case LogBackgroundColor.white:
         result += '47m';
+        break;
+      case LogBackgroundColor.brightBlack:
+        result += '100m';
+        break;
+      case LogBackgroundColor.brightRed:
+        result += '101m';
+        break;
+      case LogBackgroundColor.brightGreen:
+        result += '102m';
+        break;
+      case LogBackgroundColor.brightYellow:
+        result += '103m';
+        break;
+      case LogBackgroundColor.brightBlue:
+        result += '104m';
+        break;
+      case LogBackgroundColor.brightMagenta:
+        result += '105m';
+        break;
+      case LogBackgroundColor.brightCyan:
+        result += '106m';
+        break;
+      case LogBackgroundColor.brightWhite:
+        result += '107m';
         break;
       case LogBackgroundColor.none:
         result += '49m';
