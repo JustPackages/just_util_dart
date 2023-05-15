@@ -36,7 +36,7 @@ extension JustDateTimeExtension on DateTime {
     result += month.toStringAtLeat2Digits() + (dateSepartor ?? '');
     result += day.toStringAtLeat2Digits();
 
-    result += result + (dateTimeSeparator ?? '');
+    result += (dateTimeSeparator ?? '');
 
     result += hour.toStringAtLeat2Digits() + (timeSeparator ?? '');
     result += minute.toStringAtLeat2Digits() + (timeSeparator ?? '');
@@ -56,7 +56,7 @@ extension JustDateTimeExtension on DateTime {
     result += month.toStringAtLeat2Digits() + (dateSepartor ?? '');
     result += day.toStringAtLeat2Digits();
 
-    result += result + (dateTimeSeparator ?? '');
+    result += (dateTimeSeparator ?? '');
 
     result += hour.toStringAtLeat2Digits() + (timeSeparator ?? '');
     result += minute.toStringAtLeat2Digits() + (timeSeparator ?? '');
