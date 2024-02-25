@@ -10,4 +10,10 @@ extension JustDoubleExtension on double {
   double toFixed(int digits) {
     return double.parse(toStringAsFixed(digits));
   }
+
+  /// If Int Value is 0, then return false.
+  /// If Int Value is not 0, then return true.
+  bool? toBool() {
+    return this == 0 ? false : true;
+  }
 }
